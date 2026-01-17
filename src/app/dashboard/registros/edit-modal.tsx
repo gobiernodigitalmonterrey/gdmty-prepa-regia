@@ -151,7 +151,7 @@ export function EditModal({ registro, sedes, onSuccess }: EditModalProps) {
               type="text"
               placeholder="Nombre completo"
               value={nombreCompleto}
-              onChange={(e) => setNombreCompleto(e.target.value.toUpperCase())}
+              onChange={(e) => setNombreCompleto(e.target.value.replace(/[0-9]/g, "").toUpperCase())}
               required
             />
           </div>
@@ -162,7 +162,7 @@ export function EditModal({ registro, sedes, onSuccess }: EditModalProps) {
               type="tel"
               placeholder="10 dígitos"
               value={telefono}
-              onChange={(e) => setTelefono(e.target.value)}
+              onChange={(e) => setTelefono(e.target.value.replace(/\D/g, ""))}
               maxLength={10}
               required
             />

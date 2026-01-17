@@ -35,6 +35,7 @@ export async function GET(request: NextRequest) {
     const search = searchParams.get("search") || "";
     const sort = searchParams.get("sort") || "id";
     const direction = searchParams.get("direction") === "asc" ? "ASC" : "DESC";
+    const tipo = searchParams.get("tipo") || "";
 
     // Whitelist allowed sort columns to prevent SQL injection
     const allowedSortColumns = ["id", "nombre_completo", "telefono", "sede", "asistio", "tipo"];
@@ -42,14 +43,21 @@ export async function GET(request: NextRequest) {
 
     const offset = (page - 1) * limit;
 
-    let whereClause = "";
+    const conditions: string[] = [];
     const params: (string | number)[] = [];
 
     if (search) {
-      whereClause = "WHERE nombre_completo LIKE ? OR telefono LIKE ? OR sede LIKE ?";
+      conditions.push("(nombre_completo LIKE ? OR telefono LIKE ? OR sede LIKE ?)");
       const searchPattern = `%${search}%`;
       params.push(searchPattern, searchPattern, searchPattern);
     }
+
+    if (tipo && (tipo === "graduado" || tipo === "invitado")) {
+      conditions.push("tipo = ?");
+      params.push(tipo);
+    }
+
+    const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(" AND ")}` : "";
 
     // Get total count
     const [countResult] = await pool.execute<CountRow[]>(

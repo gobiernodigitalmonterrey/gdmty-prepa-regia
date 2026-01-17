@@ -123,8 +123,8 @@ export function RegistrosTable({ isAdmin }: RegistrosTableProps) {
   const [searchInput, setSearchInput] = useState("");
   const [loading, setLoading] = useState(true);
   const [sedes, setSedes] = useState<string[]>([]);
-  const [sortColumn, setSortColumn] = useState<string>("id");
-  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
+  const [sortColumn, setSortColumn] = useState<string>("tipo");
+  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
 
   useEffect(() => {
     async function fetchSedes() {
