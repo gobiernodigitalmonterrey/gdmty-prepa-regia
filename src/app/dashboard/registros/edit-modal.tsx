@@ -72,6 +72,13 @@ export function EditModal({ registro, sedes, onSuccess }: EditModalProps) {
     setError("");
     setIsLoading(true);
 
+    // Validate sede for graduados
+    if (tipo === "graduado" && !sede) {
+      setError("La sede es requerida para graduados");
+      setIsLoading(false);
+      return;
+    }
+
     try {
       const response = await fetch("/api/registros", {
         method: "PATCH",
@@ -81,10 +88,10 @@ export function EditModal({ registro, sedes, onSuccess }: EditModalProps) {
         body: JSON.stringify({
           id: registro.id,
           nombre_completo: nombreCompleto,
-          telefono: telefono || null,
+          telefono,
           sede: tipo === "graduado" ? sede : null,
           tipo,
-          fecha_nacimiento: fechaNacimiento || null,
+          fecha_nacimiento: fechaNacimiento,
           asistio,
         }),
       });
@@ -149,7 +156,7 @@ export function EditModal({ registro, sedes, onSuccess }: EditModalProps) {
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="telefono">Teléfono</Label>
+            <Label htmlFor="telefono">Teléfono *</Label>
             <Input
               id="telefono"
               type="tel"
@@ -157,12 +164,13 @@ export function EditModal({ registro, sedes, onSuccess }: EditModalProps) {
               value={telefono}
               onChange={(e) => setTelefono(e.target.value)}
               maxLength={10}
+              required
             />
           </div>
           {tipo === "graduado" && (
             <div className="space-y-2">
-              <Label htmlFor="sede">Sede</Label>
-              <Select value={sede} onValueChange={setSede}>
+              <Label htmlFor="sede">Sede *</Label>
+              <Select value={sede} onValueChange={setSede} required>
                 <SelectTrigger>
                   <SelectValue placeholder="Seleccionar sede" />
                 </SelectTrigger>
@@ -177,12 +185,13 @@ export function EditModal({ registro, sedes, onSuccess }: EditModalProps) {
             </div>
           )}
           <div className="space-y-2">
-            <Label htmlFor="fechaNacimiento">Fecha de Nacimiento</Label>
+            <Label htmlFor="fechaNacimiento">Fecha de Nacimiento *</Label>
             <Input
               id="fechaNacimiento"
               type="date"
               value={fechaNacimiento}
               onChange={(e) => setFechaNacimiento(e.target.value)}
+              required
             />
           </div>
           <div className="space-y-2">

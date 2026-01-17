@@ -63,6 +63,13 @@ export function RegistroModal({ onSuccess }: RegistroModalProps) {
     setError("");
     setIsLoading(true);
 
+    // Validate sede for graduados
+    if (tipo === "graduado" && !sede) {
+      setError("La sede es requerida para graduados");
+      setIsLoading(false);
+      return;
+    }
+
     try {
       const response = await fetch("/api/registros", {
         method: "POST",
@@ -71,10 +78,10 @@ export function RegistroModal({ onSuccess }: RegistroModalProps) {
         },
         body: JSON.stringify({
           nombre_completo: nombreCompleto,
-          telefono: telefono || null,
-          sede: sede || null,
+          telefono,
+          sede: tipo === "graduado" ? sede : null,
           tipo,
-          fecha_nacimiento: fechaNacimiento || null,
+          fecha_nacimiento: fechaNacimiento,
         }),
       });
 
@@ -146,7 +153,7 @@ export function RegistroModal({ onSuccess }: RegistroModalProps) {
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="telefono">Teléfono</Label>
+            <Label htmlFor="telefono">Teléfono *</Label>
             <Input
               id="telefono"
               type="tel"
@@ -154,12 +161,13 @@ export function RegistroModal({ onSuccess }: RegistroModalProps) {
               value={telefono}
               onChange={(e) => setTelefono(e.target.value)}
               maxLength={10}
+              required
             />
           </div>
           {tipo === "graduado" && (
             <div className="space-y-2">
-              <Label htmlFor="sede">Sede</Label>
-              <Select value={sede} onValueChange={setSede}>
+              <Label htmlFor="sede">Sede *</Label>
+              <Select value={sede} onValueChange={setSede} required>
                 <SelectTrigger>
                   <SelectValue placeholder="Seleccionar sede" />
                 </SelectTrigger>
