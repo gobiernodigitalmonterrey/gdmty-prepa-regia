@@ -26,10 +26,39 @@ export function AnalyticsContent() {
 
     setDownloading(true);
     try {
-      const dataUrl = await toPng(contentRef.current, {
+      // Force desktop layout for PDF generation
+      const element = contentRef.current;
+      const originalStyle = element.getAttribute("style") || "";
+      element.style.width = "1200px";
+      element.style.minWidth = "1200px";
+
+      // Force all grid elements to use desktop columns
+      const grids = element.querySelectorAll("[class*='grid-cols-1']");
+      const originalGridStyles: { el: Element; style: string }[] = [];
+      grids.forEach((grid) => {
+        const htmlGrid = grid as HTMLElement;
+        originalGridStyles.push({ el: grid, style: htmlGrid.getAttribute("style") || "" });
+        if (htmlGrid.classList.contains("lg:grid-cols-4")) {
+          htmlGrid.style.gridTemplateColumns = "repeat(4, minmax(0, 1fr))";
+        } else if (htmlGrid.classList.contains("md:grid-cols-2")) {
+          htmlGrid.style.gridTemplateColumns = "repeat(2, minmax(0, 1fr))";
+        }
+      });
+
+      // Wait for layout to settle
+      await new Promise((resolve) => setTimeout(resolve, 100));
+
+      const dataUrl = await toPng(element, {
         quality: 1,
         pixelRatio: 2,
         backgroundColor: "#ffffff",
+        width: 1200,
+      });
+
+      // Restore original styles
+      element.setAttribute("style", originalStyle);
+      originalGridStyles.forEach(({ el, style }) => {
+        (el as HTMLElement).setAttribute("style", style);
       });
 
       const pdf = new jsPDF({
@@ -152,8 +181,9 @@ export function AnalyticsContent() {
 
   return (
     <div className="space-y-6">
-      {/* Download Button */}
-      <div className="flex justify-end">
+      {/* Header with title and download button */}
+      <div className="flex justify-between items-center">
+        <h1 className="text-3xl font-bold">Analytics</h1>
         <Button onClick={downloadPDF} disabled={downloading}>
           {downloading ? "Generando PDF..." : "Descargar PDF"}
         </Button>
@@ -162,7 +192,7 @@ export function AnalyticsContent() {
       <div ref={contentRef} className="space-y-6 bg-white p-4">
       {/* Logo and Date for PDF */}
       <div className="flex flex-col items-center gap-2">
-        <img src="/mty_gdm_logo_comp.svg" alt="Gobierno de Monterrey" className="h-20" />
+        <img src="/mty_gdm_logo_comp.svg" alt="Gobierno de Monterrey" className="h-32" />
         <p className="text-center text-gray-500 text-sm">
           {new Date().toLocaleString("es-MX", { timeZone: "America/Monterrey" })}
         </p>

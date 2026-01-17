@@ -13,11 +13,11 @@ export function Navbar() {
   return (
     <nav className="bg-white border-b">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16">
+        <div className="flex justify-between h-16 sm:h-24">
           <div className="flex items-center gap-8">
             <Link href="/dashboard">
-              <img src="/mty_gdm_logo_iso.svg" alt="Logo" className="h-10 sm:hidden" />
-              <img src="/mty_gdm_logo_comp.svg" alt="Logo" className="h-16 hidden sm:block" />
+              <img src="/mty_gdm_logo_iso.svg" alt="Logo" className="h-14 sm:hidden" />
+              <img src="/mty_gdm_logo_comp.svg" alt="Logo" className="h-20 hidden sm:block" />
             </Link>
             <div className="hidden sm:flex gap-2">
               <Link
