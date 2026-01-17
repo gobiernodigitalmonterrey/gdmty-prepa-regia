@@ -34,12 +34,14 @@ export function Navbar() {
                   Analytics
                 </Link>
               )}
-              <Link
-                href="/dashboard/users"
-                className="px-3 py-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-all duration-200"
-              >
-                Usuarios
-              </Link>
+              {session?.user?.role === "admin" && (
+                <Link
+                  href="/dashboard/users"
+                  className="px-3 py-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-all duration-200"
+                >
+                  Usuarios
+                </Link>
+              )}
             </div>
           </div>
           <div className="hidden sm:flex items-center gap-4">
@@ -83,13 +85,15 @@ export function Navbar() {
                 Analytics
               </Link>
             )}
-            <Link
-              href="/dashboard/users"
-              className="block px-3 py-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Usuarios
-            </Link>
+            {session?.user?.role === "admin" && (
+              <Link
+                href="/dashboard/users"
+                className="block px-3 py-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Usuarios
+              </Link>
+            )}
             <div className="pt-2 border-t">
               <Button
                 variant="outline"
